@@ -1,7 +1,6 @@
 start here
-dt = {}
-dt['name'] = '''
+kmeans = '''
 my name is saadan
+hello world
 '''
-print("dt is made")
 end here
