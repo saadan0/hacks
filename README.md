@@ -1,5 +1,6 @@
 start here
-def give2():\n\tprint("valls")
+def give2():
+\tprint("valls")
 kmeans = '''
 my name is saadan
 hello world
