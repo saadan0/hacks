@@ -1,4 +1,84 @@
 start here
+nn2 = '''
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_curve, roc_auc_score, accuracy_score, confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
+
+# Assuming your dataframe has features in columns 'feature1', 'feature2', ..., and the target label in 'target'
+X = df.drop('target', axis=1).values
+y = df['target'].values
+
+# Split the data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Convert labels to one-hot encoded vectors
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+
+# Define the model architecture
+model = Sequential()
+model.add(Dense(32, activation='relu', input_dim=X_train.shape[1]))  # First hidden layer with ReLU activation
+model.add(Dense(16, activation='tanh'))  # Second hidden layer with tanh activation
+model.add(Dense(8, activation='relu'))  # Third hidden layer with ReLU activation
+model.add(Dense(4, activation='tanh'))  # Fourth hidden layer with tanh activation
+model.add(Dense(2, activation='softmax'))  # Output layer with softmax activation
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model
+model.fit(X_train, y_train, epochs=10, batch_size=32)
+
+# Make predictions on the test set
+y_pred_prob = model.predict(X_test)[:, 1]  # Probability of positive class for ROC curve
+y_pred = np.argmax(model.predict(X_test), axis=1)  # Predicted labels for other metrics
+
+# Compute metrics
+fpr, tpr, thresholds = roc_curve(y_test[:, 1], y_pred_prob)
+roc_auc = roc_auc_score(y_test[:, 1], y_pred_prob)
+accuracy = accuracy_score(np.argmax(y_test, axis=1), y_pred)
+confusion_mat = confusion_matrix(np.argmax(y_test, axis=1), y_pred)
+classification_rep = classification_report(np.argmax(y_test, axis=1), y_pred)
+
+# Plot ROC curve
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, label='ROC curve (area = {:.2f})'.format(roc_auc))
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic')
+plt.legend(loc='lower right')
+plt.show()
+
+# Plot accuracy curve
+epoch_nums = range(1, len(model.history.history['accuracy']) + 1)
+plt.plot(epoch_nums, model.history.history['accuracy'], label='Training Accuracy')
+plt.plot(epoch_nums, model.history.history['val_accuracy'], label='Validation Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.legend(loc='lower right')
+plt.show()
+
+# Plot confusion matrix
+sns.heatmap(confusion_mat, annot=True, cmap='Blues', fmt='d')
+plt.xlabel('Predicted Labels')
+plt.ylabel('True Labels')
+plt.title('Confusion Matrix')
+plt.show()
+
+# Display metrics
+print('Accuracy: {:.4f}'.format(accuracy))
+print('Classification Report:')
+print(classification_rep)
+
+'''
 nn = '''
 import numpy as np
 from keras.models import Sequential
