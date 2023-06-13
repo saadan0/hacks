@@ -1,4 +1,8 @@
 start here
+bpr = '''
+hello world
+saadan
+'''
 lr='''
 
 #generate some random regression data
