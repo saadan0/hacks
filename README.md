@@ -1,4 +1,59 @@
 start here
+kms = '''
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def kmeans(df, K, max_iters=100):
+    # Convert DataFrame to numpy array
+    X = df.values
+
+    # Randomly initialize K centroids
+    centroids = X[np.random.choice(X.shape[0], K, replace=False)]
+
+    for _ in range(max_iters):
+        # Assign each data point to the nearest centroid
+        distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
+        labels = np.argmin(distances, axis=0)
+
+        # Update centroids
+        new_centroids = np.array([X[labels == k].mean(axis=0) for k in range(K)])
+
+        # Check if centroids have converged
+        if np.all(centroids == new_centroids):
+            break
+
+        centroids = new_centroids
+
+    return centroids, labels
+
+
+def visualize_clusters(df, labels, centroids):
+    plt.scatter(df.iloc[:, 0], df.iloc[:, 1], c=labels)
+    plt.scatter(centroids[:, 0], centroids[:, 1], marker='X', color='red', s=100)
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title('K-means Clustering')
+    plt.show()
+
+
+# Example usage
+# Generate random data in DataFrame
+np.random.seed(42)
+data = {
+    'Feature 1': np.random.rand(100),
+    'Feature 2': np.random.rand(100)
+}
+df = pd.DataFrame(data)
+
+# Perform K-means clustering
+K = 3
+centroids, labels = kmeans(df, K)
+
+# Visualize clustering results
+visualize_clusters(df, labels, centroids)
+'''
 nn2 = '''
 import numpy as np
 import pandas as pd
