@@ -398,7 +398,7 @@ data[num_cols] = minmax.fit_transform(data[num_cols])
 data[num_cols]
 
 '''
-one-hot='''
+onehot='''
 
 import pandas as pd
 
