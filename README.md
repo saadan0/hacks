@@ -1,7 +1,26 @@
 start here
-bpr = '''
-hello world
-saadan
+nn = '''
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
+
+X_train = np.random.random((1000, 10))
+y_train = np.random.randint(2, size=(1000, 1))
+
+y_train = to_categorical(y_train)
+
+model = Sequential()
+model.add(Dense(32, activation='sigmoid', input_dim=10))
+model.add(Dense(16, activation='tanh')) 
+model.add(Dense(8, activation='relu')) 
+model.add(Dense(2, activation='softmax'))  
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=10, batch_size=32)
+X_test = np.random.random((100, 10))
+predictions = model.predict(X_test)
+print(predictions)
 '''
 lr='''
 
