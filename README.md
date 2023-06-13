@@ -1,60 +1,5 @@
 start here
-kms = '''
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-
-def kmeans(df, K, max_iters=100):
-    # Convert DataFrame to numpy array
-    X = df.values
-
-    # Randomly initialize K centroids
-    centroids = X[np.random.choice(X.shape[0], K, replace=False)]
-
-    for _ in range(max_iters):
-        # Assign each data point to the nearest centroid
-        distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
-        labels = np.argmin(distances, axis=0)
-
-        # Update centroids
-        new_centroids = np.array([X[labels == k].mean(axis=0) for k in range(K)])
-
-        # Check if centroids have converged
-        if np.all(centroids == new_centroids):
-            break
-
-        centroids = new_centroids
-
-    return centroids, labels
-
-
-def visualize_clusters(df, labels, centroids):
-    plt.scatter(df.iloc[:, 0], df.iloc[:, 1], c=labels)
-    plt.scatter(centroids[:, 0], centroids[:, 1], marker='X', color='red', s=100)
-    plt.xlabel('Feature 1')
-    plt.ylabel('Feature 2')
-    plt.title('K-means Clustering')
-    plt.show()
-
-
-# Example usage
-# Generate random data in DataFrame
-np.random.seed(42)
-data = {
-    'Feature 1': np.random.rand(100),
-    'Feature 2': np.random.rand(100)
-}
-df = pd.DataFrame(data)
-
-# Perform K-means clustering
-K = 3
-centroids, labels = kmeans(df, K)
-
-# Visualize clustering results
-visualize_clusters(df, labels, centroids)
-'''
-nn2 = '''
+nn2='''
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -64,44 +9,35 @@ import seaborn as sns
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import to_categorical
-
-# Assuming your dataframe has features in columns 'feature1', 'feature2', ..., and the target label in 'target'
+Assuming your dataframe has features in columns 'feature1', 'feature2', ..., and the target label in 'target'
 X = df.drop('target', axis=1).values
 y = df['target'].values
-
-# Split the data into training and test sets
+Split the data into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Convert labels to one-hot encoded vectors
+Convert labels to one-hot encoded vectors
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
-
-# Define the model architecture
+Define the model architecture
 model = Sequential()
 model.add(Dense(32, activation='relu', input_dim=X_train.shape[1]))  # First hidden layer with ReLU activation
 model.add(Dense(16, activation='tanh'))  # Second hidden layer with tanh activation
 model.add(Dense(8, activation='relu'))  # Third hidden layer with ReLU activation
 model.add(Dense(4, activation='tanh'))  # Fourth hidden layer with tanh activation
 model.add(Dense(2, activation='softmax'))  # Output layer with softmax activation
-
-# Compile the model
+Compile the model
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-# Train the model
+Train the model
 model.fit(X_train, y_train, epochs=10, batch_size=32)
-
-# Make predictions on the test set
+Make predictions on the test set
 y_pred_prob = model.predict(X_test)[:, 1]  # Probability of positive class for ROC curve
 y_pred = np.argmax(model.predict(X_test), axis=1)  # Predicted labels for other metrics
-
-# Compute metrics
+Compute metrics
 fpr, tpr, thresholds = roc_curve(y_test[:, 1], y_pred_prob)
 roc_auc = roc_auc_score(y_test[:, 1], y_pred_prob)
 accuracy = accuracy_score(np.argmax(y_test, axis=1), y_pred)
 confusion_mat = confusion_matrix(np.argmax(y_test, axis=1), y_pred)
 classification_rep = classification_report(np.argmax(y_test, axis=1), y_pred)
-
-# Plot ROC curve
+Plot ROC curve
 plt.figure(figsize=(8, 6))
 plt.plot(fpr, tpr, label='ROC curve (area = {:.2f})'.format(roc_auc))
 plt.plot([0, 1], [0, 1], 'k--')
@@ -110,8 +46,7 @@ plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic')
 plt.legend(loc='lower right')
 plt.show()
-
-# Plot accuracy curve
+Plot accuracy curve
 epoch_nums = range(1, len(model.history.history['accuracy']) + 1)
 plt.plot(epoch_nums, model.history.history['accuracy'], label='Training Accuracy')
 plt.plot(epoch_nums, model.history.history['val_accuracy'], label='Validation Accuracy')
@@ -120,42 +55,91 @@ plt.ylabel('Accuracy')
 plt.title('Training and Validation Accuracy')
 plt.legend(loc='lower right')
 plt.show()
-
-# Plot confusion matrix
+Plot confusion matrix
 sns.heatmap(confusion_mat, annot=True, cmap='Blues', fmt='d')
 plt.xlabel('Predicted Labels')
 plt.ylabel('True Labels')
 plt.title('Confusion Matrix')
 plt.show()
-
-# Display metrics
+Display metrics
 print('Accuracy: {:.4f}'.format(accuracy))
 print('Classification Report:')
 print(classification_rep)
 
 '''
-nn = '''
+nn='''
+
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.utils import to_categorical
-
 X_train = np.random.random((1000, 10))
 y_train = np.random.randint(2, size=(1000, 1))
-
 y_train = to_categorical(y_train)
-
 model = Sequential()
 model.add(Dense(32, activation='sigmoid', input_dim=10))
-model.add(Dense(16, activation='tanh')) 
-model.add(Dense(8, activation='relu')) 
-model.add(Dense(2, activation='softmax'))  
-
+model.add(Dense(16, activation='tanh'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(2, activation='softmax'))
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 model.fit(X_train, y_train, epochs=10, batch_size=32)
 X_test = np.random.random((100, 10))
 predictions = model.predict(X_test)
 print(predictions)
+
+'''
+kms='''
+
+def kmeans(df, K, max_iters=100):
+????# Convert DataFrame to numpy array
+????X = df.values
+
+????# Randomly initialize K centroids
+????centroids = X[np.random.choice(X.shape[0], K, replace=False)]
+
+????for _ in range(max_iters):
+????????# Assign each data point to the nearest centroid
+????????distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
+????????labels = np.argmin(distances, axis=0)
+
+????????# Update centroids
+????????new_centroids = np.array([X[labels == k].mean(axis=0) for k in range(K)])
+
+????????# Check if centroids have converged
+????????if np.all(centroids == new_centroids):
+????????????break
+
+????????centroids = new_centroids
+
+????return centroids, labels
+
+
+def visualize_clusters(df, labels, centroids):
+????plt.scatter(df.iloc[:, 0], df.iloc[:, 1], c=labels)
+????plt.scatter(centroids[:, 0], centroids[:, 1], marker='X', color='red', s=100)
+????plt.xlabel('Feature 1')
+????plt.ylabel('Feature 2')
+????plt.title('K-means Clustering')
+????plt.show()
+
+
+# Example usage
+# Generate random data in DataFrame
+np.random.seed(42)
+data = {
+????'Feature 1': np.random.rand(100),
+????'Feature 2': np.random.rand(100)
+}
+df = pd.DataFrame(data)
+
+# Perform K-means clustering
+K = 3
+centroids, labels = kmeans(df, K)
+
+# Visualize clustering results
+visualize_clusters(df, labels, centroids)
+
+
 '''
 lr='''
 
@@ -259,7 +243,7 @@ np.sqrt(mean_squared_error(y_test, y_pred))
 kmeans='''
 
 df.drop(['label'], axis = 1, inplace =True)
-    
+????
 from sklearn.cluster import KMeans
 kmeans = KMeans(n_clusters = 6, init = 'k-means++', random_state = 42)
 kmeans_blob = KMeans(n_clusters = 4, init = 'k-means++', random_state = 42)
@@ -290,9 +274,9 @@ min_clusters = 1
 max_clusters = 10
 wcss = []
 for num_clusters in range(min_clusters, max_clusters+1):
-    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-    kmeans.fit(X)
-    wcss.append(kmeans.inertia_)
+????kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+????kmeans.fit(X)
+????wcss.append(kmeans.inertia_)
 plt.plot(range(min_clusters, max_clusters+1), wcss, marker='o')
 plt.xlabel('Number of Clusters')
 plt.ylabel('WCSS')
@@ -313,12 +297,12 @@ range_n_clusters = range(2, 10)
 score = []
 clusters = []
 for n_clusters in range_n_clusters:
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-    cluster_labels = kmeans.fit_predict(X_scaled)
-    silhouette_avg = silhouette_score(X_scaled, cluster_labels)
-    clusters.append(n_clusters)
-    score.append(silhouette_avg)
-    print("For n_clusters = {}, the silhouette score is {:.2f}".format(n_clusters, silhouette_avg))
+????kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+????cluster_labels = kmeans.fit_predict(X_scaled)
+????silhouette_avg = silhouette_score(X_scaled, cluster_labels)
+????clusters.append(n_clusters)
+????score.append(silhouette_avg)
+????print("For n_clusters = {}, the silhouette score is {:.2f}".format(n_clusters, silhouette_avg))
 res = {"clusters":clusters,"silhouette score":score}
 res = pd.DataFrame(res)
 res
@@ -327,17 +311,17 @@ res
 elbow2='''
 
 kmeans_kwargs = {
-    "init": "random",
-    "n_init": 10,
-    "max_iter": 300,
-    "random_state": 42,
+????"init": "random",
+????"n_init": 10,
+????"max_iter": 300,
+????"random_state": 42,
 }
 
 sse = []
 for k in range(1, 11):
-    kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
-    kmeans.fit(scaled_features)
-    sse.append(kmeans.inertia_)
+????kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
+????kmeans.fit(scaled_features)
+????sse.append(kmeans.inertia_)
 plt.style.use("fivethirtyeight")
 plt.plot(range(1, 11), sse)
 plt.xticks(range(1, 11))
@@ -345,7 +329,7 @@ plt.xlabel("Number of Clusters")
 plt.ylabel("SSE")
 plt.show()
 kl = KneeLocator(
-    range(1, 11), sse, curve="convex", direction="decreasing"
+????range(1, 11), sse, curve="convex", direction="decreasing"
 )
 
 print(kl.elbow)
@@ -358,10 +342,10 @@ silhouette_coefficients = []
 
 # Notice you start at 2 clusters for silhouette coefficient
 for k in range(2, 11):
-    kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
-    kmeans.fit(scaled_features)
-    score = silhouette_score(scaled_features, kmeans.labels_)
-    silhouette_coefficients.append(score)
+????kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
+????kmeans.fit(scaled_features)
+????score = silhouette_score(scaled_features, kmeans.labels_)
+????silhouette_coefficients.append(score)
 plt.style.use("fivethirtyeight")
 plt.plot(range(2, 11), silhouette_coefficients)
 plt.xticks(range(2, 11))
@@ -397,29 +381,29 @@ outlier='''
 
 # Loop over each column in the dataframe
 for column in data.columns:
-  if data[column].dtype == 'int64' or data[column].dtype == 'float64':
-    # Calculate the 1st and 3rd quartiles of the column
-    q1 = data[column].quantile(0.25)
-    q3 = data[column].quantile(0.75)
+??if data[column].dtype == 'int64' or data[column].dtype == 'float64':
+????# Calculate the 1st and 3rd quartiles of the column
+????q1 = data[column].quantile(0.25)
+????q3 = data[column].quantile(0.75)
 
-    # Calculate the interquartile range (IQR)
-    iqr = q3 - q1
+????# Calculate the interquartile range (IQR)
+????iqr = q3 - q1
 
-    # Calculate the lower and upper bounds for outliers
-    lower_bound = q1 - 1.5 * iqr
-    upper_bound = q3 + 1.5 * iqr
+????# Calculate the lower and upper bounds for outliers
+????lower_bound = q1 - 1.5 * iqr
+????upper_bound = q3 + 1.5 * iqr
 
-    # Count the number of outliers in the column
-    num_outliers = ((data[column] < lower_bound) | (data[column] > upper_bound)).sum()
-    print(f'{column} has {num_outliers} outliers')
+????# Count the number of outliers in the column
+????num_outliers = ((data[column] < lower_bound) | (data[column] > upper_bound)).sum()
+????print(f'{column} has {num_outliers} outliers')
 
-    # Create a boxplot of the column if there are outliers
-    if num_outliers > 0:
-        data.boxplot(column=[column])
-        plt.title(f'Boxplot of {column}')
-        plt.show()
-        # Remove the outliers from the column
-        #data = data[(data[column] >= lower_bound) & (data[column] <= upper_bound)]
+????# Create a boxplot of the column if there are outliers
+????if num_outliers > 0:
+????????data.boxplot(column=[column])
+????????plt.title(f'Boxplot of {column}')
+????????plt.show()
+????????# Remove the outliers from the column
+????????#data = data[(data[column] >= lower_bound) & (data[column] <= upper_bound)]
 
 '''
 corr='''
@@ -433,10 +417,10 @@ sns.heatmap(corr_matrix, annot=True)
 # Remove columns with high covariance
 cols_to_drop = []
 for col in corr_matrix.columns:
-    for idx, val in corr_matrix[col].iteritems():
-        if idx != col and abs(val) > 0.95: #i have increased the correation value becuase we have less data
-            if col not in cols_to_drop:
-                cols_to_drop.append(col)
+????for idx, val in corr_matrix[col].iteritems():
+????????if idx != col and abs(val) > 0.95: #i have increased the correation value becuase we have less data
+????????????if col not in cols_to_drop:
+????????????????cols_to_drop.append(col)
 
 # Remove columns from dataframe
 data.drop(cols_to_drop, axis=1, inplace = True)
@@ -459,8 +443,8 @@ categorical_transformer = OneHotEncoder()
 
 # Combine the transformers using ColumnTransformer
 preprocessor = ColumnTransformer(transformers=[
-    ('num', numeric_transformer, numeric_columns),
-    ('cat', categorical_transformer, categorical_columns)
+????('num', numeric_transformer, numeric_columns),
+????('cat', categorical_transformer, categorical_columns)
 ])
 
 # Fit and transform the DataFrame
@@ -518,9 +502,9 @@ from sklearn.preprocessing import StandardScaler
 # Load your data into a pandas DataFrame
 # (Replace this with your actual data)
 data = {'feature1': [1, 2, 3, 4, 5],
-        'feature2': [5, 4, 3, 2, 1],
-        'feature3': [10, 20, 30, 40, 50],
-        'class': ['A', 'B', 'A', 'A', 'B']}
+????????'feature2': [5, 4, 3, 2, 1],
+????????'feature3': [10, 20, 30, 40, 50],
+????????'class': ['A', 'B', 'A', 'A', 'B']}
 df = pd.DataFrame(data)
 
 # Separate the target variable from the features
@@ -556,13 +540,13 @@ data[num_cols] = minmax.fit_transform(data[num_cols])
 data[num_cols]
 
 '''
-onehot='''
+one-hot='''
 
 import pandas as pd
 
 # Create a sample dataframe with a categorical column
 data = {
-    'Feature1': ['A', 'B', 'B', 'A', 'C', 'C', 'B', 'A', 'C', 'C']
+????'Feature1': ['A', 'B', 'B', 'A', 'C', 'C', 'B', 'A', 'C', 'C']
 }
 
 df = pd.DataFrame(data)
@@ -580,16 +564,16 @@ print(df_encoded)
 hist='''
 
 df = pd.DataFrame({
-    'A': [1, 2, 3, 4, 5],
-    'B': [6, 7, 8, 9, 10],
-    'C': [11, 12, 13, 14, 15]
+????'A': [1, 2, 3, 4, 5],
+????'B': [6, 7, 8, 9, 10],
+????'C': [11, 12, 13, 14, 15]
 })
 df.hist()
 plt.show()
 for column in df.columns:
-    sns.kdeplot(df[column])
-    plt.xlabel(column)
-    plt.show()
+????sns.kdeplot(df[column])
+????plt.xlabel(column)
+????plt.show()
 
 '''
 plots='''
@@ -600,9 +584,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 df = pd.DataFrame({
-    'A': [1, 2, 3, 4, 5],
-    'B': [6, 7, 8, 9, 10],
-    'C': [11, 12, 13, 14, 15]
+????'A': [1, 2, 3, 4, 5],
+????'B': [6, 7, 8, 9, 10],
+????'C': [11, 12, 13, 14, 15]
 })
 
 # Line plot using Matplotlib
@@ -642,14 +626,14 @@ fig = px.scatter_3d(df, x='A', y='B', z='C', title='3D Scatter Plot')
 fig.show()
 
 df = pd.DataFrame({
-    'A': [1, 2, 3, 4, 5],
-    'B': [6, 7, 8, 9, 10],
-    'C': [11, 12, 13, 14, 15]
+????'A': [1, 2, 3, 4, 5],
+????'B': [6, 7, 8, 9, 10],
+????'C': [11, 12, 13, 14, 15]
 })
 
 # Plot Probability Density Function (PDF)
 for column in df.columns:
-    sns.kdeplot(df[column], label=column)
+????sns.kdeplot(df[column], label=column)
 
 plt.title('PDF Plots')
 plt.legend()
@@ -657,7 +641,7 @@ plt.show()
 
 # Plot Cumulative Distribution Function (CDF)
 for column in df.columns:
-    sns.kdeplot(df[column], cumulative=True, label=column)
+????sns.kdeplot(df[column], cumulative=True, label=column)
 
 plt.title('CDF Plots')
 plt.legend()
@@ -689,9 +673,9 @@ X_scaled = scaler.fit_transform(X)
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 model = keras.Sequential([
-    keras.layers.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
-    keras.layers.Dense(64, activation='relu'),
-    keras.layers.Dense(1, activation='sigmoid')
+????keras.layers.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+????keras.layers.Dense(64, activation='relu'),
+????keras.layers.Dense(1, activation='sigmoid')
 ])
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
